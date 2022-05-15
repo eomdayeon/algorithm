@@ -1,4 +1,36 @@
-#include <iostream> 
-#include <string> 
-using namespace std; 
-bool verify(string input, int startIdx, int endIdx) { if (startIdx >= endIdx) { return true; } int left = startIdx; int right = endIdx; while (left < right) { if (input[left++] == input[right--]) { return false; } } return verify(input, startIdx, right - 1); } int main() { ios_base::sync_with_stdio(0); cin.tie(0); int T; cin >> T; for (int t = 0; t < T; t++) { string input; cin >> input; if (input.length() % 2 == 0) { cout << "NO\n"; continue; } cout << (verify(input, 0, input.length() - 1) ? "YES\n" : "NO\n"); } return 0; }
+#include <iostream>
+#include <cstring>
+
+using namespace std;
+
+bool check(char paper[],int s,int e)
+{
+    if(s>=e) return true;
+    int l = s;
+    int r = e;
+    while(l<r)
+    {
+        if(paper[l]==paper[r]) return false;
+        l++;
+        r--;
+    }
+    return check(paper,s,r-1);
+}
+
+int main()
+{
+    char paper[3010];
+    int t;
+    scanf("%d",&t);
+    for(int i=0; i<t; i++)
+    {
+        scanf("%s",&paper);
+        int len = strlen(paper);
+        if(len%2==0) printf("NO\n");
+        else if(check(paper,0,len-1)) printf("YES\n");
+        else printf("NO\n");
+    }
+    return 0;
+}
+ 
+
