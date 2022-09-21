@@ -37,26 +37,28 @@ def grahamScan(points):
     k = 2
 
     while k<len(points):
-        
-        while len(stack) >= 2 :
-            j = stack.pop()  #second
-            i = stack.pop()  #first
 
-            stack.append(i)  #first
-            if ccw(sortedangle[i],sortedangle[j],sortedangle[k]) == True:
-                #볼록이므로, i-j-k모두 convex hull에 해당
-                stack.append(j)  #second
-                break
 
-        stack.append(k)   
-        k = k+1
         
-    # result = [] 
-    # for i in stack:
-    #     result.append(sortedangle[i][0:2])
+        j = stack.pop()  #second
+        i = stack.pop()  #first
+        stack.append(i)  #first
+        if ccw(sortedangle[i],sortedangle[j],sortedangle[k]) == True:
+            #볼록이므로, i-j-k모두 convex hull에 해당
+            stack.append(j)  #second
+            stack.append(k)   
+            k = k+1
+
+
+        #추가된코드
+        if len(stack)==1:
+            stack.append(k)
+            k = k+1
+        #추가된코드
+
+        
 
     print(len(stack)) 
-
 
 
 N = int(input())
