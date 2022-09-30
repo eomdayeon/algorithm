@@ -24,10 +24,16 @@ while queue:
         nx = cx + dx[k]
         ny = cy + dy[k]
 
-        if 0<=nx<N and 0<=ny<M:
-            if box[nx][ny] == 0 :
-                queue.append([nx,ny])
-                box[nx][ny] = box[cx][cy] + 1
+        # if 0<=nx<N and 0<=ny<M:
+        #     if box[nx][ny] == 0 :
+        #         queue.append([nx,ny])
+        #         box[nx][ny] = box[cx][cy] + 1
+
+        if nx < 0 or ny < 0 or nx >= N or ny >= M:
+            continue
+        if box[nx][ny] == 0 :
+            queue.append([nx,ny])
+            box[nx][ny] = box[cx][cy] + 1
             
 
 m = max((map(max,box))) - 1
