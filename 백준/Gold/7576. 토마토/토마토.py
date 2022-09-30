@@ -1,36 +1,41 @@
+
 from collections import deque
-m,n = map(int,input().split())
-tomato = []
-for _ in range(n):
-    tomato.append(list(map(int,input().split())))
-queue = deque()
-for i in range(n):
-    for j in range(m):
-        if tomato[i][j] == 1:
-            queue.append((i,j))
 
 
-dx = [-1,0,1,0]
-dy = [0,-1,0,1]
+M, N = map(int,input().split())
+
+box = []
+dx=[-1,0,+1,0]
+dy=[0,+1,0,-1]
+
+for i in range(N):
+    box.append(list(map(int,input().split())))
+
+queue = deque([])
+
+for i in range(N):
+    for j in range(M):
+        if box[i][j] == 1:
+            queue.append([i,j])
+
 while queue:
-    x,y = queue.popleft()
-    for i in range(4):
-        nx = x+dx[i]
-        ny = y+dy[i]
-        if 0<=nx<n and 0<=ny<m:
-            if tomato[nx][ny] == -1:
-                continue
-            if tomato[nx][ny] == 0:
-                queue.append((nx,ny))
-                tomato[nx][ny] = tomato[x][y]+1
-                
-flag = False
-for i in range(n):
-    for j in range(m):
-        if tomato[i][j] == 0:
-            flag = True
+    cx, cy = queue.popleft()
+    for k in range(4):
+        nx = cx + dx[k]
+        ny = cy + dy[k]
+
+        if 0<=nx<N and 0<=ny<M:
+            if box[nx][ny] == 0 :
+                queue.append([nx,ny])
+                box[nx][ny] = box[cx][cy] + 1
+            
+
+m = max((map(max,box))) - 1
+
+
+for i in range(N):
+    for j in range(M):
+        if box[i][j] == 0:
+            m = -1
             break
-if flag:
-    print(-1)
-else:
-    print(max(map(max,tomato))-1)
+print(m)
