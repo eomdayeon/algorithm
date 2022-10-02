@@ -1,22 +1,14 @@
-
-def dfs():
-    if len(s) == M:
-        for num in s:
-            print(num, end = ' ')
-        print()
-        
-    for i in range(1,N+1):
-        if visited[i] == True:
-            continue
-        visited[i] = True
-        s.append(i)
-        dfs()
-        s.pop()
-        visited[i] = False
+import itertools
 
 N, M = map(int,input().split())
-s =[]
-visited=[False] * (N+1)
+nums =[]
 
-dfs()
+for i in range(N):
+    nums.append(i+1)
 
+perm = itertools.permutations(nums,M)
+
+for p in perm:
+    for pp in p:
+        print(pp,end=' ')
+    print()
