@@ -1,50 +1,64 @@
 from collections import deque
 
-# 인접 블록 찾기 -> 블록 크기, 무지개크기, 블록좌표 리턴
-def bfs(x, y, color):
-    q = deque()
-    q.append([x, y])
-    dx = [-1, 0, 1, 0]
-    dy = [0, 1, 0, -1]
-
-    block_cnt, rainbow_cnt = 1, 0  # 블록개수, 무지개블록 개수
-    blocks, rainbows = [[x,y]], []  # 블록좌표 넣을 리스트, 무지개좌표 넣을 리스트
-
-    while q:
-        x, y = q.popleft()
-        for d in range(4):
-            nx = x + dx[d]
-            ny = y + dy[d]
-            
-            # 범위 안이면서 방문 안한 일반 블록인 경우
-            if 0 <= nx < N and 0 <= ny < N and not visited[nx][ny] and a[nx][ny] == color:
-                visited[nx][ny] = 1
-                q.append([nx, ny])
-                block_cnt += 1
-                blocks.append([nx, ny])
-                
-            # 범위 안이면서 방문 안한 무지개 블록인 경우
-            elif 0 <= nx < N and 0 <= ny < N and not visited[nx][ny] and a[nx][ny] == 0:
-                visited[nx][ny] = 1
-                q.append([nx, ny])
-                block_cnt += 1
-                rainbow_cnt += 1
-                rainbows.append([nx, ny])
-
-    # 무지개블록은 방문 다시 해제
-    for x,y in rainbows:
-        visited[x][y] = 0
-
-    return [block_cnt, rainbow_cnt, blocks+rainbows]
 
 
-# 블록 제거 함수
-def remove(block):
-    for x,y in block:
-        a[x][y] = -2
+def bfs(i,j):
+    dx =[-1,0,+1,0]
+    dy =[0,+1,0,-1]
+
+    queue = deque()
+    queue.append([i,j])
+
+    block, rainbow = [], []
+    block.append([i,j])
+
+    while queue:
+        cx, cy = queue.popleft()
+        for k in range(4):
+            nx, ny = cx + dx[k], cy + dy[k]
+            if nx<0 or ny<0 or nx>=N or ny>=N:
+                continue
+            if blocks[nx][ny] == -1:
+                #검정 블록이면 패스
+                continue
+            if visited[nx][ny] == True:
+                continue
+
+            elif blocks[nx][ny] == 0 :
+                #무지개 블록이라면 그룹에 추가
+                queue.append([nx,ny])
+                visited[nx][ny] = True #그룹 블록 체크
+                rainbow.append([nx,ny])
+            elif blocks[nx][ny] == blocks[i][j]:
+                #숫자가 같은(색깔이 같은) 일반 블록이라면 블록그룹에 추가
+                queue.append([nx,ny])
+                visited[nx][ny] = True  #그룹 블록 체크, 일반 블록 방문처리
+                block.append([nx,ny])
+
+    for x, y in rainbow:
+        visited[x][y] = False
+    
+    return [len(rainbow + block), len(rainbow), block+rainbow]
+
+def remove(rm):
+    for x,y in rm:  # 리스트: [x,y]
+        blocks[x][y] = -2
+
+# def gravity(blocks):
+#     for c in range(0,N,1):
+#         for r in range(N-1,-1,-1):
+#             if blocks[r][c] == -1:
+#                 continue
+#             elif 0 <= blocks[r][c] <= N:
+#                 move_r = r
+#                 while True:
+#                     if move_r+1 == N or blocks[move_r+1][c] != -2: 
+#                         break
+#                     blocks[move_r+1][c] = blocks[move_r][c]
+#                     blocks[move_r][c] = -2
+#                     move_r += 1
 
 
-# 중력 함수
 def gravity(a):
     for i in range(N-2, -1, -1):  # 밑에서 부터 체크
         for j in range(N):
@@ -58,51 +72,59 @@ def gravity(a):
                     else:
                         break
 
+def rotate(blocks):
+    temp = [[0]*N for _ in range(N)]
 
-# 반시계 회전 함수
-def rot90(a):
-    new_a = [[0]*N for _ in range(N)]
+    for r in range(N):
+        for c in range(N):
+            temp[N-1-c][r] = blocks[r][c]
+    return temp
+
+
+blocks = []
+N, M = map(int,input().split())
+for i in range(N):
+    blocks.append(list(map(int,input().split())))
+visited = [[False]*N for _ in range(N)]
+score = 0
+
+while True: 
+    g = []
+    group = []   #while문 실행마다 블록그룹은 새로 찾아야 하므로, 초기화 필수다
+    visited = [[False]*N for _ in range(N)]  #while문 실행마다 블록그룹은 새로 찾아야 하므로, 방문 배열 역시 초기화 필수다
+
+
+    #크기가 가장 큰 블록 그룹을 찾음
     for i in range(N):
         for j in range(N):
-            new_a[N-1-j][i] = a[i][j]
-    return new_a
+            if 0 < blocks[i][j] and visited[i][j] == False:
+                #방문안한 일반 블록일 경우 그룹 찾는 bfs 수행
+                visited[i][j] = True
+                g = bfs(i,j)
+                if g[0] >= 2: 
+                    group.append(g)
+    #group = sorted(group, key = lambda x: (-x[0],-x[1],-x[2],-x[3]))
+    group.sort(reverse=True)
 
-
-
-# 0. 메인코드
-N, M = map(int, input().split())
-a = [list(map(int, input().split())) for _ in range(N)]
-
-score = 0  # 점수
-
-# 1. 오토플레이-> while {2. 크기 가장 큰 블록 찾기 3. 블록제거+점수더하기 4. 중력 5. 90회전 6. 중력}
-while True:
-    # 2. 크기 가장 큰 블록 찾기
-    visited = [[0] * N for _ in range(N)]  # 방문체크
-    blocks = []  # 가능한 블록 그룹들 넣을 리스트
-    for i in range(N):
-        for j in range(N):
-            if a[i][j] > 0 and not visited[i][j]:  # 일반블록이면서 방문 안했으면
-                visited[i][j] = 1  # 방문
-                block_info = bfs(i, j, a[i][j])  # 인접한 블록 찾기
-                # block_info = [블록크기, 무지개블록 개수, 블록좌표]
-                if block_info[0] >= 2:
-                    blocks.append(block_info)
-    blocks.sort(reverse=True)
-
-    # 3. 블록제거+점수더하기
-    if not blocks:
+    if len(group) == 0:
         break
-    remove(blocks[0][2])
-    score += blocks[0][0]**2
+    
+    remove(group[0][2])
+    score += group[0][0]**2
+    #선택된 블록 그룹(group[0])을 맵에서 제거. score 더해줌
 
-    # 4. 중력
-    gravity(a)
+    #격자에 중력 작용
+    gravity(blocks)
 
-    # 5. 90회전
-    a = rot90(a)
 
-    # 6. 중력
-    gravity(a)
+    #격자 반시계 회전
+    blocks = rotate(blocks)
+
+
+    #격자에 중력 작용
+    gravity(blocks)
+
+
+
 
 print(score)
