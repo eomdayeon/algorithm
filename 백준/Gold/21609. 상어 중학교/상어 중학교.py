@@ -1,11 +1,17 @@
 from collections import deque
 
+dx =[-1,0,+1,0]
+dy =[0,+1,0,-1]
+
+blocks = []
+N, M = map(int,input().split())
+for i in range(N):
+    blocks.append(list(map(int,input().split())))
+visited = [[False]*N for _ in range(N)]
+score = 0
 
 
 def bfs(i,j):
-    dx =[-1,0,+1,0]
-    dy =[0,+1,0,-1]
-
     queue = deque()
     queue.append([i,j])
 
@@ -38,55 +44,33 @@ def bfs(i,j):
     for x, y in rainbow:
         visited[x][y] = False
     
-    return [len(rainbow + block), len(rainbow), block+rainbow]
-
-def remove(rm):
-    for x,y in rm:  # 리스트: [x,y]
-        blocks[x][y] = -2
-
-# def gravity(blocks):
-#     for c in range(0,N,1):
-#         for r in range(N-1,-1,-1):
-#             if blocks[r][c] == -1:
-#                 continue
-#             elif 0 <= blocks[r][c] <= N:
-#                 move_r = r
-#                 while True:
-#                     if move_r+1 == N or blocks[move_r+1][c] != -2: 
-#                         break
-#                     blocks[move_r+1][c] = blocks[move_r][c]
-#                     blocks[move_r][c] = -2
-#                     move_r += 1
+    return [len(rainbow + block), len(rainbow),i,j, block+rainbow]
 
 
-def gravity(a):
+
+def gravity():
     for i in range(N-2, -1, -1):  # 밑에서 부터 체크
         for j in range(N):
-            if a[i][j] > -1:  # -1이 아니면 아래로 다운
+            if blocks[i][j] > -1:  # -1이 아니면 아래로 다운
                 r = i
                 while True:
-                    if 0<=r+1<N and a[r+1][j] == -2:  # 다음행이 인덱스 범위 안이면서 -2이면 아래로 다운
-                        a[r+1][j] = a[r][j]
-                        a[r][j] = -2
+                    if 0<=r+1<N and blocks[r+1][j] == -2:  # 다음행이 인덱스 범위 안이면서 -2이면 아래로 다운
+                        blocks[r+1][j] = blocks[r][j]
+                        blocks[r][j] = -2
                         r += 1
                     else:
                         break
 
-def rotate(blocks):
+def rotate():
     temp = [[0]*N for _ in range(N)]
 
     for r in range(N):
         for c in range(N):
-            temp[N-1-c][r] = blocks[r][c]
+            temp[N-c-1][r] = blocks[r][c]
+
     return temp
 
 
-blocks = []
-N, M = map(int,input().split())
-for i in range(N):
-    blocks.append(list(map(int,input().split())))
-visited = [[False]*N for _ in range(N)]
-score = 0
 
 while True: 
     g = []
@@ -109,20 +93,23 @@ while True:
     if len(group) == 0:
         break
     
-    remove(group[0][2])
+
     score += group[0][0]**2
     #선택된 블록 그룹(group[0])을 맵에서 제거. score 더해줌
+    for rm in group[0][4]:  #maxblock 리스트: [x,y]
+        blocks[rm[0]][rm[1]] = -2
+
 
     #격자에 중력 작용
-    gravity(blocks)
+    gravity()
 
 
     #격자 반시계 회전
-    blocks = rotate(blocks)
+    blocks = rotate()
 
 
     #격자에 중력 작용
-    gravity(blocks)
+    gravity()
 
 
 
