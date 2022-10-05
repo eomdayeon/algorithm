@@ -46,30 +46,31 @@ def remove(rm):
 
 
 
-# def gravity(blocks):
-#     for r in range(N-2,-1,-1):
-#         for c in range(0,N,1):
-#             if 0 <= blocks[r][c]:
-#                 move_r = r
-#                 while True:
-#                     if 0<=move_r+1<N or blocks[move_r+1][c] == -2: 
-#                         blocks[move_r+1][c] = blocks[move_r][c]
-#                         blocks[move_r][c] = -2
-#                         move_r += 1
-#                     else:
-#                         break
 def gravity(blocks):
-    for i in range(N-2, -1, -1):  # 밑에서 부터 체크
-        for j in range(N):
-            if blocks[i][j] > -1:  # -1이 아니면 아래로 다운
-                r = i
+    for r in range(N-2, -1, -1):
+        for c in range(N):
+            if blocks[r][c] > -1:
+                move_r = r
                 while True:
-                    if 0<=r+1<N and blocks[r+1][j] == -2:  # 다음행이 인덱스 범위 안이면서 -2이면 아래로 다운
-                        blocks[r+1][j] = blocks[r][j]
-                        blocks[r][j] = -2
-                        r += 1
+                    if 0<=move_r+1<N and blocks[move_r+1][c] == -2: 
+                        blocks[move_r+1][c] = blocks[move_r][c]
+                        blocks[move_r][c] = -2
+                        move_r += 1
                     else:
                         break
+
+# def gravity(blocks):
+#     for i in range(N-2, -1, -1):  # 밑에서 부터 체크
+#         for j in range(N):
+#             if blocks[i][j] > -1:  # -1이 아니면 아래로 다운
+#                 r = i
+#                 while True:
+#                     if 0<=r+1<N and blocks[r+1][j] == -2:  # 다음행이 인덱스 범위 안이면서 -2이면 아래로 다운
+#                         blocks[r+1][j] = blocks[r][j]
+#                         blocks[r][j] = -2
+#                         r += 1
+#                     else:
+#                         break
 
 
 
