@@ -8,19 +8,6 @@ result = 9999
 chicken_idx=[]
 
 
-# def distance(chicken_idx):
-#     sum = 0
-#     for i in range(N):
-#         for j in range(N):
-#             if city[i][j] == 1:
-#                 temp = []
-#                 for k in chicken_idx:  #이 부분을 실수했다. chicken_idx는 선택된 chicken에 대한 index를 저장하는 배열이므로, 해당 index를 탐색해야 하기 때문에 for k in range(0,len(chicken_idx)): 라고 하면 틀렸다. for문 범위 실수에 주의하자.
-#                     cx = chicken[k][0]
-#                     cy = chicken[k][1]
-#                     temp.append(abs(cx - i) + abs(cy - j))
-#                 sum += min(temp)
-#     return sum
-
 def distance(chicken_idx):
     sum = 0 
     for hx, hy in house:
@@ -42,12 +29,9 @@ def comb(idx, cnt, M):
         return
 
     for i in range(idx, len(chicken)):
-        if select[i] == False:
-            select[i] = True
-            chicken_idx.append(i)       # 치킨집 5개 (0,1,2,3,4) 중 선택되는 index를 저장한다. -> 나중에 해당 치킨집의 위치는 chicken[인덱스][0],chicken[인덱스][1]로 구할 수 있음.
-            comb(i + 1, cnt + 1, M)
-            select[i] = False
-            chicken_idx.pop()
+        chicken_idx.append(i)       # 치킨집 5개 (0,1,2,3,4) 중 선택되는 index를 저장한다. -> 나중에 해당 치킨집의 위치는 chicken[인덱스][0],chicken[인덱스][1]로 구할 수 있음.
+        comb(i + 1, cnt + 1, M)
+        chicken_idx.pop()
 
 
 N, M = map(int, input().split())
@@ -72,7 +56,6 @@ for i in range(N):
 
 #치킨집 K개 중에 최대 M개를 선택하는 경우의 수를 탐색한다. (M이 3이라면, 치킨집 K개 중에 1개 선택, 2개 선택 , 3개 선택하는 경우의 수를 다 탐색해야 한다.)
 for m in range(1, M + 1):
-    select = [False] * len(chicken)  
     comb(0, 0, m)
 
 print(result)
