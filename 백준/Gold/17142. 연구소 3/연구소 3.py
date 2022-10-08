@@ -77,11 +77,12 @@ def bfs(sel_virus_idx):
                 visited[nx][ny] = True
                 t[nx][ny] = t[cx][cy] + 1
                 queue.append((nx, ny))
-                time = t[nx][ny]
+                #time = t[nx][ny]
                 if board[nx][ny] == 0:
                     blank += 1
 
-    
+    time = max(map(max, t))
+
     if blank < count:   #빈칸이 다 채워주지 못한 경우, 시간을 max로 주어야 한다. -> 이 코드를 안적으면 틀리게 된다.
         time = 99999
 
