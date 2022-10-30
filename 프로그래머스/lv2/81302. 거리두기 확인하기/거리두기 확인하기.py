@@ -11,11 +11,11 @@ def solution(places):
             if flag == True:
                 check = True
                 return True
-            return False
+            return
 
         if flag == True:
             check = True
-            return True
+            return
 
         visited[r][c] = True
         for k in range(4):
@@ -30,7 +30,6 @@ def solution(places):
                 dfs(arr,nr,nc,visited,cnt+1,flag)
                 visited[nr][nc] = False
                     
-        return False
 
     def manhatten(room):
         global check
